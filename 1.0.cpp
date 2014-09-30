@@ -13,12 +13,11 @@ using namespace std;
 int countLines(char fileName[]);
 void fillVector(char s[], vector<pair<int, int> > &v);
 void printVector(vector<pair<int, int> > & myVec);
-void firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2);
+int firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2);
 
 int main(int argc, char *fname[]){
     vector<pair<int, int> > v1;
     vector<pair<int, int> > v2;
-    int numTriangles = 0;
     
     clock_t startTime = clock();
     
@@ -29,13 +28,12 @@ int main(int argc, char *fname[]){
     cout << "original vector of pairs:" << endl;
     printVector(v1);
     
-    firstPass(v1,v2);
+    cout << firstPass(v1,v2) << " triangles were found." << endl;
     
     clock_t endTime = clock();
     double totalTime = (endTime - startTime) / (double) CLOCKS_PER_SEC;
     
     cout << "Time: " << totalTime << endl;
-    cout << numTriangles << " triangles were found." << endl;
     
     return 0;
 }
@@ -55,7 +53,8 @@ void printVector(vector<pair<int, int> > & myVec)
     cout << endl;
 }
 
-void firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2){
+int firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2){
+    int numTriangles = 0;
     for (int i = 0; i < v1.size(); i++){
         for (int k = 0; k < v1.size(); k++){
             if(!(v1[i].first == v1[i].second) && !(v1[k].first == v1[k].second)){ //checks to make sure that the edge isn't a repeat of the same number, ie: (6,6)
@@ -77,6 +76,7 @@ void firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2){
             }
         }
     }
+    return numTriangles;
 }
 
 void fillVector(char s[], vector<pair<int, int> > &v){
