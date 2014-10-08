@@ -24,7 +24,7 @@ map<int, set<int> > myMap;
 int main(int argc, char *fname[]){
     vector<pair<int, int> > v1;
     vector<pair<int, int> > v2;
-    int count;
+    int count = 0;
     
     clock_t startTime = clock();
     
@@ -37,7 +37,7 @@ int main(int argc, char *fname[]){
     
     //cout << firstPass(v1,v2) << " triangles were found." << endl;
     secondPass(-1, -1, 3, count);
-    cout << count << endl;
+    cout << "The count is " << count << endl;
 
     clock_t endTime = clock();
     double totalTime = (endTime - startTime) / (double) CLOCKS_PER_SEC;
@@ -89,7 +89,7 @@ int firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2){
 }
 
 void secondPass(int beginning, int next, int num_sides, int &count){
-	if(beginning == -1){
+	if(beginning > -1){
 		for(it_type iterator = myMap.begin(); iterator != myMap.end(); iterator++){
 			int value = iterator->first;
 //			secondPass(value, next, num_sides, count);
@@ -107,7 +107,9 @@ void secondPass(int beginning, int next, int num_sides, int &count){
 		}
 		else{
 			for(set<int>::iterator it = myMap[next].begin(); it != myMap[next].end(); it++){
+				
 				if(*it == beginning){
+					cout << "Triangle formed" << endl;
 					count++;
 				}
 			}
@@ -187,20 +189,12 @@ void fillVector2(char s[], vector<pair<int, int> > &v){
 				else{
 
 					myMap[first].insert(second);
-				}
-
-				pair<int, int> p;
-				p = make_pair(first, second);
-				//                if (first <= second){
-				//                    p = make_pair(first,second);
-				//                } else {
-				//                    p = make_pair(second,first);
-				//                }
-				v.push_back(p);
+				}         
 			}
 		}
 		inputobject.close();
 	}
+	cout << "Fill vector 2 done" << endl;
 }
 
 int countLines(char fileName[]){
