@@ -28,7 +28,7 @@ int main(int argc, char *fname[]){
     
     clock_t startTime = clock();
     
-    fillVector2(fname[1], v1);
+    fillVector(fname[1], v1);
     //sort(v1.begin(), v1.end());
     //v1.erase(unique(v1.begin(),v1.end()), v1.end());
     
@@ -89,27 +89,32 @@ int firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2){
 }
 
 void secondPass(int beginning, int next, int num_sides, int &count){
-	if(beginning > -1){
-		for(it_type iterator = myMap.begin(); iterator != myMap.end(); iterator++){
+	
+	if (beginning < 0){
+		map<int, set<int> >::iterator iterator;
+		
+		for(iterator = myMap.begin(); iterator != myMap.end(); iterator++){
 			int value = iterator->first;
-//			secondPass(value, next, num_sides, count);
 			set<int>::iterator it;
+			
 			for(it = myMap[value].begin(); it != myMap[value].end(); it++){
-				secondPass(beginning, *it, num_sides - 1, count);
+				if (value != *it){
+					secondPass(value, *it, num_sides - 1, count);
+				}
 			}
 		}
 	}
 	else{
 		if(num_sides > 1){
 			for(set<int>::iterator it = myMap[next].begin(); it != myMap[next].end(); it++){
-				secondPass(beginning, *it, num_sides - 1, count);
+				if (next != *it){
+					secondPass(beginning, *it, num_sides - 1, count);
+				}
 			}
 		}
 		else{
-			for(set<int>::iterator it = myMap[next].begin(); it != myMap[next].end(); it++){
-				
-				if(*it == beginning){
-					cout << "Triangle formed" << endl;
+			for(set<int>::iterator it = myMap[beginning].begin(); it != myMap[beginning].end(); it++){
+				if(*it == next){
 					count++;
 				}
 			}
@@ -159,6 +164,7 @@ void fillVector(char s[], vector<pair<int, int> > &v){
         }
         inputobject.close();
     }
+	cout << "Filled" << endl;
 }
 
 
