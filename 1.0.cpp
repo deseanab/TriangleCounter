@@ -18,8 +18,11 @@ void printVector(vector<pair<int, int> > & myVec);
 int firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2);
 typedef map<int, set<int> >::iterator it_type;
 void secondPass(int beginning, int next, int num_sides, int &count);
+void thirdPass(int beginning, int next, int& count);
+void sortMap();
 
-map<int, set<int> > myMap;
+map<int, set<int> > setMap;
+map<int, vector<int> > vecMap;
 
 int main(int argc, char *fname[]){
     vector<pair<int, int> > v1;
@@ -43,15 +46,9 @@ int main(int argc, char *fname[]){
     double totalTime = (endTime - startTime) / (double) CLOCKS_PER_SEC;
     
     cout << "Time: " << totalTime << endl;
-    cout << myMap.size() << endl;
+    cout << setMap.size() << endl;
     return 0;
 }
-
-struct Triangle {
-    pair<int, int> p1;
-    pair<int, int> p2;
-    pair<int, int> p3;
-};
 
 void printVector(vector<pair<int, int> > & myVec)
 {
@@ -73,11 +70,6 @@ int firstPass(vector<pair<int, int> > &v1, vector<pair<int, int> > &v2){
                     //doesn't need to be stored, check instantly if that pair exists
                     for (int m = 0; m < v1.size(); m++){
                         if(v1[m].first == v1[i].first && v1[m].second == v1[k].second){ //if these pairs match up, a triangle is formed
-                            Triangle t;
-                            t.p1 = make_pair(v1[i].first, v1[i].second);
-                            t.p2 = make_pair(v1[k].first, v1[k].second);
-                            t.p3 = make_pair(v1[i].first, v1[k].second);
-//                            cout << "A triangle has been formed with the edges: (" << v1[i].first << ", " << v1[i].second << ") (" << v1[k].first << ", " << v1[k].second << ") (" << v1[i].first << ", " << v1[k].second << ")" << endl;
                             numTriangles++;
                         }
                     }
@@ -93,11 +85,11 @@ void secondPass(int beginning, int next, int num_sides, int &count){
 	if (beginning < 0){
 		map<int, set<int> >::iterator iterator;
 		
-		for(iterator = myMap.begin(); iterator != myMap.end(); iterator++){
+		for(iterator = setMap.begin(); iterator != setMap.end(); iterator++){
 			int value = iterator->first;
 			set<int>::iterator it;
 			
-			for(it = myMap[value].begin(); it != myMap[value].end(); it++){
+			for(it = setMap[value].begin(); it != setMap[value].end(); it++){
 				if (value != *it){
 					secondPass(value, *it, num_sides - 1, count);
 				}
@@ -106,19 +98,37 @@ void secondPass(int beginning, int next, int num_sides, int &count){
 	}
 	else{
 		if(num_sides > 1){
-			for(set<int>::iterator it = myMap[next].begin(); it != myMap[next].end(); it++){
+			for(set<int>::iterator it = setMap[next].begin(); it != setMap[next].end(); it++){
 				if (next != *it){
 					secondPass(beginning, *it, num_sides - 1, count);
 				}
 			}
 		}
 		else{
-			for(set<int>::iterator it = myMap[beginning].begin(); it != myMap[beginning].end(); it++){
+			for(set<int>::iterator it = setMap[beginning].begin(); it != setMap[beginning].end(); it++){
 				if(*it == next){
 					count++;
 				}
 			}
 		}
+	}
+}
+
+void thirdPass(int beginning, int next, int& count){
+	if (beginning < 0 && next < 0){
+		map<int, vector<int> >::iterator iterator;
+
+		for (iterator = vecMap.begin(); iterator != vecMap.end(); iterator++){
+			int value = iterator->first;
+			vector<int>::iterator it;
+
+			for (it = vecMap[value].begin(); it != vecMap[value].end(); it++){
+				thirdPass(value, *it, count);
+			}
+		}
+	}
+	else{
+		// Compare the vectors		
 	}
 }
 
@@ -142,14 +152,14 @@ void fillVector(char s[], vector<pair<int, int> > &v){
                 	swap(first, second);
                 }
 
-                it = myMap.find(first);
+                it = setMap.find(first);
 
-                if(it != myMap.end() ){
-                	myMap[first].insert(second);
+                if(it != setMap.end() ){
+                	setMap[first].insert(second);
                 }
                 else{
 
-                	myMap[first].insert(second);
+                	setMap[first].insert(second);
                 }
 
                 pair<int,int> p;
@@ -167,8 +177,7 @@ void fillVector(char s[], vector<pair<int, int> > &v){
 	cout << "Filled" << endl;
 }
 
-
-void fillVector2(char s[], vector<pair<int, int> > &v){
+void fillMap(char s[], vector<pair<int, int> > &v){
 	ifstream inputobject;
 	string line = "";
 	inputobject.open(s);
@@ -181,26 +190,19 @@ void fillVector2(char s[], vector<pair<int, int> > &v){
 		while (getline(inputobject, line)){
 			if (line.at(0) != '#'){
 				istringstream iss(line);
-				int first = 0, second = 0;
+				int first, second;
 				iss >> first;
 				iss >> second;
-				map <int, set<int> >::iterator it;
+
+				setMap[first].insert(second);
+
+				vecMap[first].push_back(second);
 				
-
-				it = myMap.find(first);
-
-				if (it != myMap.end()){
-					myMap[first].insert(second);
-				}
-				else{
-
-					myMap[first].insert(second);
-				}         
 			}
 		}
 		inputobject.close();
 	}
-	cout << "Fill vector 2 done" << endl;
+	cout << "Filled map" << endl;
 }
 
 int countLines(char fileName[]){
@@ -217,4 +219,15 @@ int countLines(char fileName[]){
         }
     }
     return numLines;
+}
+
+void sortMap(){
+	map<int, vector<int> >::iterator it;
+	for (it = vecMap.begin(); it != vecMap.end(); it++){
+		vector<int> val;
+		int start = it->first;
+		val = vecMap[start];
+		sort(val.begin(), val.end());
+		val.erase(unique(val.begin(), val.end()), val.end());
+	}
 }
