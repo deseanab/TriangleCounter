@@ -132,6 +132,8 @@ void thirdPass(int beginning, int next, int& count){
 		}
 	}
 	else{
+		cout << "Comparing Vectors" << endl;
+		cout << count << endl;
 		// Compare the vectors
 		vector<int> first = vecMap[beginning];
 		vector<int> second = vecMap[next];
@@ -145,14 +147,16 @@ void thirdPass(int beginning, int next, int& count){
 
 		
 		while (first_it != first.end() || second_it != second.end()){
-			if (first_it > first.begin()){
+			if (!first_it){
+				cout << "first_it went too far" << endl;
 				first_it -= first_factor;
 				first_factor = 1;
 				first_it++;
 			}
-			else if (second_it > second.begin()){
+			else if (!second_it){
+				cout << "second_it went too far" << endl;
 				second_it -= second_factor;
-				second_factor = second_factor / 2;
+				second_factor = 1;
 				second_it++;
 			}
 			else{
@@ -162,6 +166,7 @@ void thirdPass(int beginning, int next, int& count){
 					second_it++;
 					first_factor = 1;
 					second_factor = 1;
+					var = 0;
 				}
 				else{
 					switch (var)
@@ -177,8 +182,14 @@ void thirdPass(int beginning, int next, int& count){
 						}
 					case 1:
 						if (*first_it < *second_it){
-							first_it += first_factor;
-							first_factor == first_factor * 2;
+							if (first.end() - first_factor < first_it){
+								first_factor = 1;
+								first_it += first_factor;
+							}
+							else{
+								first_it += first_factor;
+								first_factor = first_factor * 2;
+							}
 							break;
 						}
 						else{
@@ -197,8 +208,14 @@ void thirdPass(int beginning, int next, int& count){
 						break;
 					case 2:
 						if (*first_it > *second_it){
-							second_it += second_factor;
-							second_factor == second_factor * 2;
+							if (second.end() - second_factor < second_it){
+								second_factor = 1;
+								second_it += second_factor;
+							}
+							else{
+								second_it += second_factor;
+								second_factor = second_factor * 2;
+							}
 							break;
 						}
 						else{
@@ -217,6 +234,7 @@ void thirdPass(int beginning, int next, int& count){
 						break;
 					}
 				}
+				//return;
 			}
 
 		}
