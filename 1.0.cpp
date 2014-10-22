@@ -20,6 +20,7 @@ typedef map<int, set<int> >::iterator it_type;
 void secondPass(int beginning, int next, int num_sides, int &count);
 void thirdPass(int beginning, int next, int& count);
 void sortMap();
+void fillMap(char s[]);
 
 map<int, set<int> > setMap;
 map<int, vector<int> > vecMap;
@@ -31,15 +32,18 @@ int main(int argc, char *fname[]){
     
     clock_t startTime = clock();
     
-    fillVector(fname[1], v1);
+    //fillVector(fname[1], v1);
     //sort(v1.begin(), v1.end());
     //v1.erase(unique(v1.begin(),v1.end()), v1.end());
+	fillMap(fname[1]);
+	sortMap();
     
     //cout << "original vector of pairs:" << endl;
     //printVector(v1);
     
     //cout << firstPass(v1,v2) << " triangles were found." << endl;
-    secondPass(-1, -1, 3, count);
+    //secondPass(-1, -1, 3, count);
+	thirdPass(-1, -1, count);
     cout << "The count is " << count << endl;
 
     clock_t endTime = clock();
@@ -128,7 +132,94 @@ void thirdPass(int beginning, int next, int& count){
 		}
 	}
 	else{
-		// Compare the vectors		
+		// Compare the vectors
+		vector<int> first = vecMap[beginning];
+		vector<int> second = vecMap[next];
+
+		vector<int>::iterator first_it = first.begin();
+		vector<int>::iterator second_it = second.begin();
+
+		int first_factor = 1;
+		int second_factor = 1;
+		int var = 0;
+
+		
+		while (first_it != first.end() || second_it != second.end()){
+			if (first_it > first.begin()){
+				first_it -= first_factor;
+				first_factor = 1;
+				first_it++;
+			}
+			else if (second_it > second.begin()){
+				second_it -= second_factor;
+				second_factor = second_factor / 2;
+				second_it++;
+			}
+			else{
+				if (*first_it == *second_it){
+					count++;
+					first_it++;
+					second_it++;
+					first_factor = 1;
+					second_factor = 1;
+				}
+				else{
+					switch (var)
+					{
+					case 0:
+						if (*first_it < *second_it){
+							var = 1;
+							break;
+						}
+						else{
+							var = 2;
+							break;
+						}
+					case 1:
+						if (*first_it < *second_it){
+							first_it += first_factor;
+							first_factor == first_factor * 2;
+							break;
+						}
+						else{
+							first_it -= first_factor;
+							first_factor = 1;
+							if (*first_it + 1 > *second_it){
+								var = 2;
+								first_it++;
+								second_it++;
+							}
+							else{
+								first_it += first_factor;
+								first_factor = first_factor * 2;
+							}
+						}
+						break;
+					case 2:
+						if (*first_it > *second_it){
+							second_it += second_factor;
+							second_factor == second_factor * 2;
+							break;
+						}
+						else{
+							second_it -= second_factor;
+							second_factor = 1;
+							if (*first_it < *second_it + 1){
+								var = 1;
+								first_it++;
+								second_it++;
+							}
+							else{
+								second_it += second_factor;
+								second_factor = second_factor * 2;
+							}
+						}
+						break;
+					}
+				}
+			}
+
+		}
 	}
 }
 
@@ -177,7 +268,7 @@ void fillVector(char s[], vector<pair<int, int> > &v){
 	cout << "Filled" << endl;
 }
 
-void fillMap(char s[], vector<pair<int, int> > &v){
+void fillMap(char s[]){
 	ifstream inputobject;
 	string line = "";
 	inputobject.open(s);
