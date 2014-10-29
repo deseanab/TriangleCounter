@@ -58,7 +58,7 @@ void thirdPass(int beginning, int next, int& count){
 		}
 	}
 	else{
-		cout << "Comparing Vectors" << endl;
+		cout << "Comparing Vectors " << beginning << " " << next << endl;
 		cout << count << endl;
 		// Compare the vectors
 		vector<int> first = vecMap[beginning];
@@ -293,53 +293,6 @@ void thirdPass(int beginning, int next, int& count){
 }
 */
 
-
-void fillVector(char s[], vector<pair<int, int> > &v){
-	ifstream inputobject;
-	string line = "";
-	inputobject.open(s);
-	if (inputobject.fail()) {
-		cout << "Failed to open file" << endl;
-		inputobject.clear();
-	}
-	else {
-		cout << "opened: " << s << endl << endl;
-		while (getline(inputobject, line)){
-			if (line.at(0) != '#'){
-				istringstream iss(line);
-				int first = 0, second = 0;
-				iss >> first;
-				iss >> second;
-				map <int, set<int> >::iterator it;
-				if (first > second){
-					swap(first, second);
-				}
-
-				it = setMap.find(first);
-
-				if (it != setMap.end()){
-					setMap[first].insert(second);
-				}
-				else{
-
-					setMap[first].insert(second);
-				}
-
-				pair<int, int> p;
-				p = make_pair(first, second);
-				//                if (first <= second){
-				//                    p = make_pair(first,second);
-				//                } else {
-				//                    p = make_pair(second,first);
-				//                }
-				v.push_back(p);
-			}
-		}
-		inputobject.close();
-	}
-	cout << "Filled" << endl;
-}
-
 void fillMap(char s[]){
 	ifstream inputobject;
 	string line = "";
@@ -357,10 +310,10 @@ void fillMap(char s[]){
 				iss >> first;
 				iss >> second;
 
-				setMap[first].insert(second);
-
-				vecMap[first].push_back(second);
-
+				if (first != second){
+					setMap[first].insert(second);
+					vecMap[first].push_back(second);
+				}
 			}
 		}
 		inputobject.close();
