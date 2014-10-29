@@ -1,4 +1,4 @@
 all:
-	g++ 1.0.cpp -o run
+	g++ thirdAttempt.cpp -o run
 clean:
 	rm -f run
