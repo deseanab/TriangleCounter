@@ -42,8 +42,8 @@ int main(int argc, char *fname[]){
     //printVector(v1);
     
     //cout << firstPass(v1,v2) << " triangles were found." << endl;
-    //secondPass(-1, -1, 3, count);
-	thirdPass(-1, -1, count);
+    secondPass(-1, -1, 3, count);
+	//thirdPass(-1, -1, count);
     cout << "The count is " << count << endl;
 
     clock_t endTime = clock();
@@ -117,7 +117,7 @@ void secondPass(int beginning, int next, int num_sides, int &count){
 		}
 	}
 }
-
+/*
 void thirdPass(int beginning, int next, int& count){
 	if (beginning < 0 && next < 0){
 		map<int, vector<int> >::iterator iterator;
@@ -240,7 +240,7 @@ void thirdPass(int beginning, int next, int& count){
 		}
 	}
 }
-
+*/
 void fillVector(char s[], vector<pair<int, int> > &v){
     ifstream inputobject;
     string line = "";
@@ -302,6 +302,8 @@ void fillMap(char s[]){
 				int first, second;
 				iss >> first;
 				iss >> second;
+
+				if (first > second){ swap(first, second); }
 
 				setMap[first].insert(second);
 
