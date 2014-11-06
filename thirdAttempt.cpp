@@ -125,7 +125,6 @@ void thirdPass(int beginning, int next, int& count){
 						if (first_factor/2 == 1){
 							//cout << "Increasing the second" << endl;
 							var = 0;
-							//firstIndex++;
 							secondIndex++;
 							first_factor = 1;
 							second_factor = 1;
@@ -154,7 +153,6 @@ void thirdPass(int beginning, int next, int& count){
 						if (second_factor/2 == 1){
 							var = 0;
 							firstIndex++;
-							//secondIndex++;
 							first_factor = 1;
 							second_factor = 1;
 						}
@@ -170,6 +168,59 @@ void thirdPass(int beginning, int next, int& count){
 				}
 			}
 		}
+		if (firstIndex < first.size() && (second.size() > 0) && (second[second.size()-1] > first[firstIndex])){
+			//cout << "Didn't finish looking through first" << endl;
+			first_factor = 1;
+			while (firstIndex < first.size()){
+				if (first[firstIndex] == second[secondIndex]){
+					count++;
+					first_factor = 1;
+					//firstIndex++;
+				}
+				firstIndex++;
+				/*
+				else{
+					if (first.size() - first_factor < firstIndex){
+						//cout << "Going too far, jump back and increment by one" << endl;
+						first_factor = 1;
+						firstIndex += first_factor;
+					}
+					else{
+						//cout << "Incrementing by the factor " << first_factor << endl;
+						firstIndex += first_factor;
+						first_factor = first_factor * 2;
+					}
+				}
+				*/
+			}
+		}
+		else if (secondIndex < second.size() && first.size() > 0 && (first[first.size() - 1] > second[secondIndex])){
+			//cout << "Didn't finish looking through second" << endl;
+			second_factor = 1;
+			while (secondIndex < second.size()){
+				if (first[firstIndex] == second[secondIndex]){
+					count++;
+					second_factor = 1;
+					//secondIndex++;
+				}
+				secondIndex++;
+				/*
+				else{
+					if (second.size() - second_factor < secondIndex){
+						//cout << "Going too far, jump back and increment by one" << endl;
+						second_factor = 1;
+						secondIndex += second_factor;
+					}
+					else{
+						//cout << "Incrementing by the factor " << first_factor << endl;
+						secondIndex += second_factor;
+						second_factor = second_factor * 2;
+					}
+				}
+				*/
+			}
+		}
+
 		//cout << "Comparison Complete" << endl;
 	}
 }
