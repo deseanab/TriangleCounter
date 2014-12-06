@@ -11,7 +11,7 @@
 
 using namespace std;
 
-int countLines(char fileName[]);
+//int countLines(char fileName[]);
 void printVector(vector<int> & vec);
 void thirdPass(int beginning, int next, int& count);
 void sortMap();
@@ -29,13 +29,13 @@ int main(int argc, char *fname[]){
 	sortMap();
 
 	thirdPass(-1, -1, count);
-	cout << "The count is " << count << endl;
-
+	
 	clock_t endTime = clock();
 	double totalTime = (endTime - startTime) / (double)CLOCKS_PER_SEC;
 
+	cout << endl;
+	cout << "The count is " << count << endl;
 	cout << "Time: " << totalTime << endl;
-	cout << setMap.size() << endl;
 	return 0;
 }
 
@@ -58,19 +58,39 @@ void thirdPass(int beginning, int next, int& count){
 
 		int firstIndex = 0;
 		int secondIndex = 0;
+		int firstSize = first.size() - 1;
+		int secondSize = second.size() - 1;
+
+		bool lastfound = false;
+		bool run = true;
 
 		int first_factor = 1;
 		int second_factor = 1;
 		int var = 0;
 
-		while (firstIndex < first.size() && secondIndex < second.size()){
+		if (first.size() == 0 || second.size() == 0){
+			return;
+		}
+		int firnum = first[firstIndex];
+		int secnum = second[secondIndex];
+
+		while (run){
+			firnum = first[firstIndex];
+			secnum = second[secondIndex];
+			if (firstIndex >= firstSize && secondIndex >= secondSize && first_factor == 1 && second_factor == 1){
+				run = false;
+			}
 			if (first[firstIndex] == second[secondIndex]){
-				count++;
-				firstIndex++;
-				secondIndex++;
+				if (!lastfound) count++;
+				if (firstIndex == firstSize && secondIndex == secondSize){
+					lastfound = true;
+				}
+				if (firstIndex < firstSize) { firstIndex++; }
+				if (secondIndex < secondSize) { secondIndex++; }
 				first_factor = 1;
 				second_factor = 1;
 				var = 0;
+				
 			}
 			else{
 				switch (var)
@@ -86,9 +106,14 @@ void thirdPass(int beginning, int next, int& count){
 					}
 				case 1:
 					if (first[firstIndex] < second[secondIndex]){
-						if (first.size() - first_factor < firstIndex){
+						if (firstSize - first_factor < firstIndex){// || first.size() == 1){
 							first_factor = 1;
-							firstIndex += first_factor;
+							if (firstIndex == firstSize){
+								return;
+								secondIndex++;
+							}
+							if (firstIndex < firstSize) { firstIndex++; }
+							
 						}
 						else{
 							firstIndex += first_factor;
@@ -97,43 +122,49 @@ void thirdPass(int beginning, int next, int& count){
 						break;
 					}
 					else{
-						
-						if (first_factor/2 == 1){
+
+						if (first_factor == 2 || first_factor == 1){
 							var = 0;
-							secondIndex++;
+							if (secondIndex < secondSize) { secondIndex++; }
 							first_factor = 1;
 							second_factor = 1;
 						}
 						else{
 							firstIndex -= first_factor / 2;
 							first_factor = 1;
-							firstIndex += first_factor;
+							if (firstIndex < firstSize) { firstIndex++; }
 							first_factor = first_factor * 2;
 						}
 					}
 					break;
 				case 2:
 					if (first[firstIndex] > second[secondIndex]){
-						if (second.size() - second_factor < secondIndex){
+						if (secondSize - second_factor < secondIndex){// || (second.size() == 1)){
 							second_factor = 1;
-							secondIndex += second_factor;
+							if (secondIndex == secondSize){
+								return;
+								firstIndex++;
+							}
+							if (secondIndex < secondSize) { secondIndex++; }
+							
 						}
 						else{
 							secondIndex += second_factor;
 							second_factor = second_factor * 2;
 						}
+						
 					}
 					else{
-						if (second_factor/2 == 1){
+						if (second_factor == 2 || second_factor == 1){
 							var = 0;
-							firstIndex++;
+							if (firstIndex < firstSize) { firstIndex++; }
 							first_factor = 1;
 							second_factor = 1;
 						}
 						else{
-							secondIndex -= second_factor/2;
+							secondIndex -= second_factor / 2;
 							second_factor = 1;
-							secondIndex += second_factor;
+							if (secondIndex < secondSize) { secondIndex++; }
 							second_factor = second_factor * 2;
 						}
 					}
@@ -141,27 +172,6 @@ void thirdPass(int beginning, int next, int& count){
 				}
 			}
 		}
-		if (firstIndex < first.size() && (second.size() > 0) && (second[second.size()-1] > first[firstIndex])){
-			first_factor = 1;
-			while (firstIndex < first.size()){
-				if (first[firstIndex] == second[secondIndex]){
-					count++;
-					first_factor = 1;
-				}
-				firstIndex++;
-			}
-		}
-		else if (secondIndex < second.size() && first.size() > 0 && (first[first.size() - 1] > second[secondIndex])){
-			second_factor = 1;
-			while (secondIndex < second.size()){
-				if (first[firstIndex] == second[secondIndex]){
-					count++;
-					second_factor = 1;
-				}
-				secondIndex++;
-			}
-		}
-
 	}
 }
 
@@ -182,7 +192,7 @@ void fillMap(char s[]){
 		inputobject.clear();
 	}
 	else {
-		cout << "opened: " << s << endl << endl;
+		cout << "Opened: " << s << endl << endl;
 		while (getline(inputobject, line)){
 			if (line.at(0) != '#'){
 				istringstream iss(line);
@@ -199,28 +209,9 @@ void fillMap(char s[]){
 		}
 		inputobject.close();
 	}
-	cout << "Filled map" << endl;
-}
-
-int countLines(char fileName[]){
-	int numLines;
-	ifstream inputobject;
-	string line = "";
-	inputobject.open(fileName);
-	if (inputobject.fail()) {
-		cout << "Failed to open file" << endl;
-		inputobject.clear();
-	}
-	else {
-		while (getline(inputobject, line)){
-			numLines++;
-		}
-	}
-	return numLines;
 }
 
 void sortMap(){
-	cout << "Sorting Map" << endl;
 	map<int, vector<int> >::iterator it;
 	for (it = vecMap.begin(); it != vecMap.end(); it++){
 		//vector<int>* val;
@@ -231,5 +222,4 @@ void sortMap(){
 		vecMap[start].erase(unique(vecMap[start].begin(), vecMap[start].end()), vecMap[start].end());
 		//printVector(vecMap[start]);
 	}
-	cout << "Map Sorted" << endl;
 }
