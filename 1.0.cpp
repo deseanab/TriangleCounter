@@ -262,7 +262,7 @@ void fillVector(char s[], vector<pair<int, int> > &v){
                 }
 
                 it = setMap.find(first);
-
+		//if/else does same operation, is there a reason for the conditional?
                 if(it != setMap.end() ){
                 	setMap[first].insert(second);
                 }
